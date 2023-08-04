@@ -330,7 +330,7 @@ app = Flask(__name__)
 
 @app.route("/sms", methods=['POST'])
 def incoming_sms():
-    zt.handle_incoming_message(request.values)
+    textgpt.handle_incoming_message(request.values)
     return ''
 
 if __name__ == "__main__":
