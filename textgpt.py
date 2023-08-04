@@ -322,7 +322,7 @@ class textGPT(object):
     def get_user_limits(self, user_phone_number):
         #TODO: implement token limiting and message limiting
         raise NotImplementedError
-        #return ''
+        
     
 
 # Flask app webhook handler for Twilio SMS    
