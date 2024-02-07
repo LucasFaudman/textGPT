@@ -138,7 +138,8 @@ class textGPT(object):
     
 
         
-    def get_message_response(self, incoming_message_obj, settings={}):
+    def get_message_response(self, incoming_message_obj, settings=None):
+        settings = {} if settings is None else settings
         user_phone_number = incoming_message_obj.from_phone_number
         text_messages = self.mdb.get_messages_for_phone_number(user_phone_number)
 
@@ -161,7 +162,8 @@ class textGPT(object):
 
 
 
-    def handle_command(self, incoming_message_obj, settings={}, media_url=None):
+    def handle_command(self, incoming_message_obj, settings=None, media_url=None):
+        settings = {} if settings is None else settings
         verbs = ['help', 'get', 'set', 'reset', 'models', 'limits', 'image']
         settings_params = ['model', 'system_prompt', 'stop_sequence',
                   'max_tokens', 'temperature', 'top_p', 'frequency_penalty', 'presence_penalty']
@@ -252,7 +254,8 @@ class textGPT(object):
                 print(e)
                 return str(e)    
 
-    def openai_get_chat(self, messages=[], n=1, **kwargs):
+    def openai_get_chat(self, messages=None, n=1, **kwargs):
+        messages = [] if messages is None else messages
         
         result = self.try_openai(
             getter_fn=openai.ChatCompletion.create, 
