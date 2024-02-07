@@ -4,7 +4,7 @@ from flask import Flask, request, redirect
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 import openai
-from openai.error import ServiceUnavailableError, InvalidRequestError
+from openai import OpenAIError
 
 from messagedb import MessageDB, Message
 from datetime import datetime
@@ -239,18 +239,9 @@ class textGPT(object):
         try:
             response = getter_fn(**kwargs)
             return parser_fn(response)
-        except Exception as e:
-            if isinstance(e, ServiceUnavailableError):
-                print(e)
-                return f'Error: {e}'
-                # return 'ServiceUnavailableError'
-            elif isinstance(e, InvalidRequestError):
-                print(e)
-                return f'Error: {e}'
-                # return 'InvalidRequestError'
-            else:
-                print(e)
-                return str(e)
+        except OpenAIError as e:
+            print(e)
+            return str(e)
 
     def openai_get_chat(self, messages=None, n=1, **kwargs):
         messages = [] if messages is None else messages
