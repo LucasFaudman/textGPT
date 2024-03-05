@@ -83,10 +83,9 @@ class textGPT(object):
         self.mdb = MessageDB(self.db_name)
         incoming_message_obj = self.mdb.add_message(
             incoming_message_sid, from_phone_number, to_phone_number, incoming_message_body)
-        settings = self.mdb.get_settings_for_phone_number(from_phone_number)
 
         # If settings is None, add default settings
-        if settings is None:
+        if (settings := self.mdb.get_settings_for_phone_number(from_phone_number)) is None:
             self.mdb.add_settings(from_phone_number, **DEFAULT_SETTINGS)
             settings = self.mdb.get_settings_for_phone_number(
                 from_phone_number)
