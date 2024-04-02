@@ -198,15 +198,15 @@ class textGPT(object):
             if param == 'settings':
                 self.mdb.update_settings_for_phone_number(
                     user_phone_number, **DEFAULT_SETTINGS)
-                reply = f'Your settings have been reset to defaults'
+                reply = 'Your settings have been reset to defaults'
             elif param == 'messages':
                 self.mdb.delete_messages_for_phone_number(user_phone_number)
-                reply = f'Your conversation has been reset.'
+                reply = 'Your conversation has been reset.'
             elif param == 'all':
                 self.mdb.update_settings_for_phone_number(
                     user_phone_number, **DEFAULT_SETTINGS)
                 self.mdb.delete_messages_for_phone_number(user_phone_number)
-                reply = f'Your settings and conversation have been reset.'
+                reply = 'Your settings and conversation have been reset.'
 
         elif verb == 'models' and len(args) == 0:
             reply = 'Available Models:\n' + '\n'.join(self.all_models)
