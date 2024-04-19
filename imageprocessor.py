@@ -61,7 +61,7 @@ def get_image_bytes_if_valid(url):
         image_bytes = download_image(url)
         print(f"Downloaded {len(image_bytes)} bytes of image data.")
     except requests.exceptions.RequestException as e:
-        error_string = f'Error downloading image:'
+        error_string = 'Error downloading image:'
         print(error_string, e)
         return error_string
 
