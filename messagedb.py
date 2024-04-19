@@ -66,8 +66,7 @@ class MessageDB:
     def get_phone_id(self, phone_number):
         self.cursor.execute(
             'SELECT phone_id FROM phone_numbers WHERE phone_number = ?', (phone_number,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(f"[DB]: Phone number '{phone_number}' not found.")
@@ -76,8 +75,7 @@ class MessageDB:
     def get_system_prompt_id(self, system_prompt):
         self.cursor.execute(
             'SELECT system_prompt_id FROM system_prompts WHERE system_prompt = ?', (system_prompt,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(f"[DB]: System prompt '{system_prompt}' not found.")
@@ -86,8 +84,7 @@ class MessageDB:
     def get_model_id(self, model_name):
         self.cursor.execute(
             'SELECT model_id FROM models WHERE model_name = ?', (model_name,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(f"[DB]: Model '{model_name}' not found.")
@@ -95,8 +92,7 @@ class MessageDB:
 
 #### ADDING TO DB ####
     def add_phone_number(self, phone_number):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             print(
                 f"[DB]: Phone number '{phone_number}' already exists in the database.")
             return phone_id
@@ -122,8 +118,7 @@ class MessageDB:
         return Message(message_id, message_id, from_phone_number, to_phone_number, body, timestamp)
 
     def add_system_prompt(self, system_prompt):
-        system_prompt_id = self.get_system_prompt_id(system_prompt)
-        if system_prompt_id is not None:
+        if (system_prompt_id := self.get_system_prompt_id(system_prompt)) is not None:
             print(
                 f"[DB]: System prompt '{system_prompt}' already exists in the database.")
             return system_prompt_id
@@ -136,8 +131,7 @@ class MessageDB:
         return system_prompt_id
 
     def add_model(self, model_name):
-        model_id = self.get_model_id(model_name)
-        if model_id is not None:
+        if (model_id := self.get_model_id(model_name)) is not None:
             print(
                 f"[DB]: Model '{model_name}' already exists in the database.")
             return model_id
@@ -150,21 +144,18 @@ class MessageDB:
         return model_id
 
     def _handle_settings_kwargs(self, **kwargs):
-        system_prompt = kwargs.pop('system_prompt', None)
-        if system_prompt:
+        if system_prompt := kwargs.pop('system_prompt', None):
             system_prompt_id = self.add_system_prompt(system_prompt)
             kwargs['system_prompt_id'] = system_prompt_id
 
-        model = kwargs.pop('model', None)
-        if model:
+        if model := kwargs.pop('model', None):
             model_id = self.add_model(model)
             kwargs['model_id'] = model_id
 
         return kwargs
 
     def add_settings(self, phone_number, **kwargs):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             kwargs = self._handle_settings_kwargs(**kwargs)
             values = tuple(kwargs.values())
             set_keys = ', '.join(kwargs.keys())
@@ -182,8 +173,7 @@ class MessageDB:
 
 #### UPDATING DB ####
     def update_settings_for_phone_number(self, phone_number, **kwargs):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             kwargs = self._handle_settings_kwargs(**kwargs)
             values = tuple(kwargs.values())
             set_values = ', '.join([f'{key} = ?' for key in kwargs])
@@ -201,16 +191,14 @@ class MessageDB:
     def get_phone_number(self, phone_id):
         self.cursor.execute(
             'SELECT phone_number FROM phone_numbers WHERE phone_id = ?', (phone_id,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(f"[DB]: Phone number with ID '{phone_id}' not found.")
             return None
 
     def get_messages_for_phone_number(self, phone_number):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             self.cursor.execute(
                 'SELECT * FROM messages WHERE from_phone_id = ? OR to_phone_id = ?', (phone_id, phone_id))
             results = self.cursor.fetchall()
@@ -231,8 +219,7 @@ class MessageDB:
     def get_system_prompt(self, system_prompt_id):
         self.cursor.execute(
             'SELECT system_prompt FROM system_prompts WHERE system_prompt_id = ?', (system_prompt_id,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(
@@ -242,20 +229,17 @@ class MessageDB:
     def get_model(self, model_id):
         self.cursor.execute(
             'SELECT model_name FROM models WHERE model_id = ?', (model_id,))
-        result = self.cursor.fetchone()
-        if result:
+        if result := self.cursor.fetchone():
             return result[0]
         else:
             print(f"[DB]: Model with ID '{model_id}' not found.")
             return None
 
     def get_settings_for_phone_number(self, phone_number):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             self.cursor.execute(
                 'SELECT * FROM settings WHERE phone_id = ?', (phone_id,))
-            result = self.cursor.fetchone()
-            if result:
+            if result := self.cursor.fetchone():
                 phone_id, system_prompt_id, model_id, stop_sequence, max_tokens, temperature, top_p, frequency_penalty, presence_penalty = result
                 system_prompt = self.get_system_prompt(system_prompt_id)
                 model = self.get_model(model_id)
@@ -279,8 +263,7 @@ class MessageDB:
             return None
 
     def delete_messages_for_phone_number(self, phone_number):
-        phone_id = self.get_phone_id(phone_number)
-        if phone_id is not None:
+        if (phone_id := self.get_phone_id(phone_number)) is not None:
             self.cursor.execute(
                 'DELETE FROM messages WHERE from_phone_id = ? OR to_phone_id = ?', (phone_id, phone_id))
             self.conn.commit()
